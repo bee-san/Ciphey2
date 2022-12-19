@@ -175,4 +175,12 @@ mod tests {
                 .is_identified
         );
     }
+    // TODO make these obvious succeed or fail cases
+
+    #[test]
+    fn test_check_rock_you() {
+        assert!(
+            check_english("!naruto").is_some()
+        );
+    }
 }
