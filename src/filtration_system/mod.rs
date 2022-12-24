@@ -37,13 +37,13 @@ use rayon::prelude::*;
 /// Relevant docs: https://doc.rust-lang.org/book/ch17-02-trait-objects.html
 pub struct Decoders {
     /// Components is a vector of decoders.
-    pub components: Vec<Box<dyn Crack + Sync>>,
+    pub components: Vec<Box<dyn std::any::Any + Crack + Sync>>,
 }
 
 impl Decoders {
     /// Iterate over all of the decoders and run .crack(text) on them
     /// Then if the checker succeed, we short-circuit the iterator
-    /// and stop all processing as soon as possible.
+    /// and stop all processing as soon as possible.d
     /// We are using Trait Objects
     /// https://doc.rust-lang.org/book/ch17-02-trait-objects.html
     /// Which allows us to have multiple different structs in the same vector
@@ -120,7 +120,7 @@ pub fn filter_and_get_decoders(_text_struct: &DecoderResult) -> Decoders {
     let morsecodedecoder = Decoder::<MorseCodeDecoder>::new();
     let atbashdecoder = Decoder::<AtbashDecoder>::new();
     let caesardecoder = Decoder::<CaesarDecoder>::new();
-    Decoders {
+    let mut decoders = Decoders {
         components: vec![
             Box::new(reversedecoder),
             Box::new(base58_bitcoin),
@@ -139,7 +139,16 @@ pub fn filter_and_get_decoders(_text_struct: &DecoderResult) -> Decoders {
             Box::new(caesardecoder),
             Box::new(citrix_ctx1),
         ],
+    };
+
+    for i in decoders.components{
+        // TODO implement getter methods on all functions
+        // TODO we need to receive the previous decoding to the filter function, we can do that by changing `.text()`
+        // TODO we need to check if the previous function is reciprocal and remove it from this round
+        if i.get_reciprocal() 
     }
+
+    return decoders
 }
 
 #[cfg(test)]
