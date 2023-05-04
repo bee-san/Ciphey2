@@ -47,9 +47,10 @@ impl Check for Checker<EnglishChecker> {
             link: self.link,
         };
 
-        // After we've normalised our string, if we find it's a length 0 we don't do anything
+        // After we've normalised our string, if we find it's a length 2 we don't do anything
         // This can happen if our string is a single puncuation mark, for example.
-        if input.is_empty() {
+        // There are no words of length 2 or more in the dict, so it's not worth checking.
+        if input.len() < 2 {
             return result;
         }
 
@@ -106,6 +107,9 @@ fn normalise_string(input: &str) -> String {
         .to_ascii_lowercase()
         .chars()
         .filter(|x| !x.is_ascii_punctuation())
+        // if digit is base10 filter it out
+        // Our dictionary does not contain numbers, so we want to filter them out
+        .filter(|x| !x.is_ascii_digit())
         .collect()
 }
 
@@ -186,5 +190,17 @@ mod tests {
     fn test_check_fail_single_puncuation_char() {
         let checker = Checker::<EnglishChecker>::new();
         assert!(!checker.check("#").is_identified);
+    }
+
+    #[test]
+    fn test_check_fail_single_number() {
+        let checker = Checker::<EnglishChecker>::new();
+        assert!(!checker.check("2").is_identified);
+    }
+
+    #[test]
+    fn test_check_fail_single_letter() {
+        let checker = Checker::<EnglishChecker>::new();
+        assert!(!checker.check("F").is_identified);
     }
 }
