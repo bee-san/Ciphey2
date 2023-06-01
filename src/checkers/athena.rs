@@ -8,6 +8,7 @@ use super::{
     human_checker,
     lemmeknow_checker::LemmeKnow,
     regex_checker::RegexChecker,
+    quadgrams::QuadgramsChecker,
 };
 
 /// Athena checker runs all other checkers
@@ -52,7 +53,7 @@ impl Check for Checker<Athena> {
                 return check_res;
             }
 
-            let english = Checker::<EnglishChecker>::new();
+            let english = Checker::<QuadgramsChecker>::new();
             let english_result = english.check(text);
             if english_result.is_identified {
                 let mut check_res = CheckResult::new(&english);
